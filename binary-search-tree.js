@@ -23,7 +23,7 @@ class Tree {
     /*
      * If the tree is empty, return a new node
      */
-    if (root == null) {
+    if (root === null) {
       root = new Node(key);
       return root;
     }
@@ -35,15 +35,97 @@ class Tree {
     /* return the (unchanged) node pointer */
     return root;
   }
-  delete(data) {}
-  deleteRec(data) {
-    if (root == null) {
+
+  delete(data) {
+    this.root = this.deleteRec(this.root, data);
+  }
+
+  deleteRec(root, key) {
+    function findSmallest(subTree) {
+      if (subTree === null) {
+        return subTree;
+      }
+
+      if (subTree.left === null) {
+        return subTree.data;
+      }
+      return findSmallest(subTree.left);
+    }
+
+    if (root === null) {
       return root;
     }
 
-    if (key < root.data) root.left = this.deleteRec(root.left, key);
-    else if (key > root.data) root.right = this.deleteRec(root.right, key);
+    if (key < root.data) {
+      root.left = this.deleteRec(root.left, key);
+    } else if (key > root.data) {
+      root.right = this.deleteRec(root.right, key);
+    } else {
+      if (root.left === null && root.right === null) {
+        return null;
+      } else if (root.left === null && root.right) {
+        return root.right;
+      } else if (root.right == null && root.left) {
+        return root.left;
+      } else {
+        root.data = findSmallest(root.right);
+        root.right = this.deleteRec(root.right, root.data);
+        return root;
+      }
+    }
+    return root;
   }
+
+  find(key, root = this.root) {
+    if (root === null) {
+      return null;
+    }
+
+    if (root.data === key) {
+      return root;
+    }
+
+    if (key < root.data) return this.find(key, root.left);
+    else if (key > root.data) return this.find(key, root.right);
+  }
+
+  levelOrder(func = (n) => n, root = this.root) {
+    if (root === null) {
+      return null;
+    }
+    let queue = [];
+    let arr = [];
+
+    if (root.left) queue.push(root.left);
+    if (root.right) queue.push(root.right);
+    arr.push(func(root.data));
+
+    while (queue.length > 0) {
+      root = queue.shift();
+      if (root.left) queue.push(root.left);
+      if (root.right) queue.push(root.right);
+      arr.push(func(root.data));
+    }
+
+    return arr;
+  }
+
+  inOrder(func = (n) => n, root = this.root) {
+    if (root === null) {
+      root = new Node(key);
+      return root;
+    }
+
+    /* Otherwise, recur down the tree */
+    if (key < root.data) root.left = this.insertRec(root.left, key);
+    else if (key > root.data) root.right = this.insertRec(root.right, key);
+
+    /* return the (unchanged) node pointer */
+    return root;
+
+  }
+  preOrder() {}
+  postOrder() {}
 }
 
 function buildTree(array, start, end) {
@@ -71,6 +153,19 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 prettyPrint(tree.root);
 
+console.log(tree.find(666));
+
 tree.insert(10);
 
 prettyPrint(tree.root);
+
+tree.delete(8);
+
+prettyPrint(tree.root);
+
+console.log(tree.levelOrder());
+console.log(
+  tree.levelOrder(function (n) {
+    return n + 1;
+  })
+);
