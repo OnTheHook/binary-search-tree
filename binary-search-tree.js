@@ -150,6 +150,63 @@ class Tree {
 
     return arr;
   }
+
+  depth(node, root = this.root, steps = 0) {
+    if (root === null) {
+      return null;
+    }
+
+    if (node < root.data) {
+      return this.depth(node, root.left, steps + 1);
+    } else if (node > root.data) {
+      return this.depth(node, root.right, steps + 1);
+    } else {
+      return steps;
+    }
+  }
+
+  height(node, root = this.find(node)) {
+    if (root === null) {
+      return -1;
+    }
+
+    let leftHeight = this.height(node, root.left);
+    let rightHeight = this.height(node, root.right);
+    let ans = Math.max(leftHeight, rightHeight) + 1;
+
+    return ans;
+  }
+
+  isBalanced(root = this.root) {
+    if (root === null) {
+      return true;
+    }
+    let leftHeight;
+    let rightHeight;
+    if (root.left) {
+      leftHeight = this.height(root.left.data);
+    } else {
+      leftHeight = 0;
+    }
+
+    if (root.right) {
+      rightHeight = this.height(root.right.data);
+    } else {
+      rightHeight = 0;
+    }
+
+    if (![-1, 0, 1].includes(leftHeight - rightHeight)) {
+      return false;
+    } else {
+      let balanced = this.isBalanced(root.left) && this.isBalanced(root.right);
+      return balanced;
+    }
+  }
+
+  reBalance() {
+    let arr = this.inOrder();
+    this.root = buildTree(arr, 0, arr.length - 1);
+  }
 }
 
 function buildTree(array, start, end) {
@@ -174,8 +231,3 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
-
-prettyPrint(tree.root);
-
-console.log(tree.inOrder());
-console.log(tree.inOrder(function (n) {return n * 2}));
