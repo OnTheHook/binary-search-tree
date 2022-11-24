@@ -112,20 +112,44 @@ class Tree {
 
   inOrder(func = (n) => n, root = this.root) {
     if (root === null) {
-      root = new Node(key);
-      return root;
+      return [];
     }
 
-    /* Otherwise, recur down the tree */
-    if (key < root.data) root.left = this.insertRec(root.left, key);
-    else if (key > root.data) root.right = this.insertRec(root.right, key);
+    let arr = [];
 
-    /* return the (unchanged) node pointer */
-    return root;
+    arr.push(...this.inOrder(func, root.left));
+    arr.push(func(root.data));
+    arr.push(...this.inOrder(func, root.right));
 
+    return arr;
   }
-  preOrder() {}
-  postOrder() {}
+
+  preOrder(func = (n) => n, root = this.root) {
+    if (root === null) {
+      return [];
+    }
+
+    let arr = [];
+    arr.push(func(root.data));
+    arr.push(...this.preOrder(func, root.left));
+    arr.push(...this.preOrder(func, root.right));
+
+    return arr;
+  }
+
+  postOrder(func = (n) => n, root = this.root) {
+    if (root === null) {
+      return [];
+    }
+
+    let arr = [];
+
+    arr.push(...this.postOrder(func, root.left));
+    arr.push(...this.postOrder(func, root.right));
+    arr.push(func(root.data));
+
+    return arr;
+  }
 }
 
 function buildTree(array, start, end) {
@@ -153,19 +177,5 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 prettyPrint(tree.root);
 
-console.log(tree.find(666));
-
-tree.insert(10);
-
-prettyPrint(tree.root);
-
-tree.delete(8);
-
-prettyPrint(tree.root);
-
-console.log(tree.levelOrder());
-console.log(
-  tree.levelOrder(function (n) {
-    return n + 1;
-  })
-);
+console.log(tree.inOrder());
+console.log(tree.inOrder(function (n) {return n * 2}));
