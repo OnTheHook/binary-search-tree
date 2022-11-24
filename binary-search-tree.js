@@ -219,9 +219,6 @@ function buildTree(array, start, end) {
   return node;
 }
 
-let tree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
-console.log(tree.root);
-
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node.right !== null) {
     prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
@@ -231,3 +228,36 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
+
+randomArray = (length = 100, max = 1000) =>
+  [...new Array(length)].map(() => Math.round(Math.random() * max));
+
+let random = randomArray();
+
+let tree = new Tree(random);
+
+prettyPrint(tree.root);
+
+console.log("Balanced: " + tree.isBalanced());
+
+console.log(tree.levelOrder());
+console.log(tree.preOrder());
+console.log(tree.postOrder());
+console.log(tree.inOrder());
+
+for (let i = 0; i < 101; i++) {
+  tree.insert(Math.round(Math.random() * 1000));
+}
+
+console.log("Balanced: " + tree.isBalanced());
+
+tree.reBalance();
+
+console.log("Balanced: " + tree.isBalanced());
+
+console.log(tree.levelOrder());
+console.log(tree.preOrder());
+console.log(tree.postOrder());
+console.log(tree.inOrder());
+
+prettyPrint(tree.root);
